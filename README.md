@@ -266,3 +266,33 @@ describe("DecentralizedLottery", function () {
 4. **Oracle Failure**: Handling of VRF request failures
 
 ## Cost Optimization
+
+### Gas Efficiency Techniques
+- Use of arrays instead of mappings where appropriate
+- Packing of state variables
+- Efficient event definitions
+- Batch operations where possible
+
+### Estimated Costs
+- Contract Deployment: ~2,000,000 gas
+- Lottery Entry: ~50,000 gas
+- Winner Selection: ~200,000 gas (plus Chainlink VRF costs)
+
+## Future Enhancements
+
+### Potential Upgrades
+1. **Multiple Prize Tiers**: Split prize pool among multiple winners
+2. **Token-Based Lottery**: Support for ERC20 tokens instead of ETH
+3. **Governance Integration**: Allow token holders to vote on parameters
+4. **L2 Integration**: Optimism or Arbitrum deployment for lower fees
+5. **Front-End Integration**: Web3 interface for user interaction
+
+## Conclusion
+
+This decentralized lottery system provides a secure, transparent, and provably fair way to conduct raffles on the Ethereum blockchain. By leveraging Chainlink's VRF, it eliminates the need for trust in the randomness generation process, making it truly decentralized and trustworthy for participants.
+
+The contract is designed with security as a priority, following best practices and including comprehensive testing to ensure reliability. Its modular design allows for future enhancements and customization based on specific requirements.
+
+---
+
+*Note: This implementation is for educational purposes. Always conduct thorough security audits before deploying to mainnet.*
