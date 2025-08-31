@@ -232,3 +232,37 @@ async function main() {
    - Only owner can update parameters
    - Reentrancy protection
    - Emergency stop functionality
+
+### Sample Test Code
+```javascript
+// test/Lottery.test.js
+describe("DecentralizedLottery", function () {
+  it("Should allow players to enter", async function () {
+    await lottery.connect(player1).enterLottery({ value: ticketPrice });
+    expect(await lottery.getPlayerCount()).to.equal(1);
+  });
+  
+  it("Should select a random winner", async function () {
+    // Simulate VRF response
+    await expect(lottery.connect(owner).requestRandomWinner())
+      .to.emit(lottery, "RandomWinnerRequested");
+  });
+});
+```
+
+## Security Considerations
+
+### Best Practices Implemented
+- Use of Chainlink VRF for secure randomness
+- Reentrancy guards on external calls
+- Proper access control with OpenZeppelin's Ownable
+- Input validation on all parameters
+- Emergency stop mechanism
+
+### Potential Risks
+1. **Chainlink VRF Dependency**: Relies on Chainlink's infrastructure
+2. **Gas Limit Considerations**: Callback gas limit must be sufficient
+3. **Block Timestamp Manipulation**: Minimal reliance on block.timestamp
+4. **Oracle Failure**: Handling of VRF request failures
+
+## Cost Optimization
