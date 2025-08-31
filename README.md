@@ -11,3 +11,11 @@ A trustless, transparent lottery system built on Ethereum using Chainlink VRF fo
 - **Automatic Payouts**: Distributes prizes without manual intervention
 - **Historical Data**: Tracks previous winners and lottery history
 - **Permissioned Administration**: Restricted functions for contract management
+
+### State Variables
+```solidity
+enum LotteryState {
+    OPEN,
+    CLOSED,
+    CALCULATING_WINNER
+}
