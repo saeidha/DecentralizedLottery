@@ -209,3 +209,26 @@ async function main() {
   console.log("Lottery deployed to:", lottery.address);
 }
 ```
+
+## Testing Strategy
+
+### Test Cases
+1. **Successful Lottery Entry**
+   - User can enter with correct ticket price
+   - User cannot enter with incorrect ticket price
+   - User cannot enter when lottery is full
+
+2. **Random Winner Selection**
+   - Only owner can request random winner
+   - Winner selection works correctly
+   - Prize distribution to winner
+
+3. **State Management**
+   - Proper state transitions
+   - Cannot enter when lottery is closed
+   - Automatic closing when duration expires
+
+4. **Security Tests**
+   - Only owner can update parameters
+   - Reentrancy protection
+   - Emergency stop functionality
