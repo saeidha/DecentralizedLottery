@@ -19,3 +19,24 @@ enum LotteryState {
     CLOSED,
     CALCULATING_WINNER
 }
+
+address[] public players;
+address[] public previousWinners;
+address public recentWinner;
+uint256 public lotteryId;
+uint256 public ticketPrice;
+uint256 public maxPlayers;
+uint256 public lotteryDuration;
+uint256 public lotteryStartTime;
+LotteryState public state;
+address public owner;
+
+// Chainlink VRF Variables
+uint256 public vrfRequestId;
+bytes32 public keyHash;
+uint64 public subscriptionId;
+uint32 public callbackGasLimit;
+uint16 public requestConfirmations;
+```
+
+## Implementation Details
