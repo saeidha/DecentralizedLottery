@@ -117,3 +117,95 @@ function requestRandomWinner() public {
     emit RandomWinnerRequested(lotteryId, vrfRequestId);
 }
 ```
+
+#### VRF Callback Function
+```solidity
+function fulfillRandomWords(uint256, /* requestId */ uint256[] memory randomWords) internal override {
+    require(state == LotteryState.CALCULATING_WINNER, "Not in calculation state");
+    require(randomWords.length > 0, "No random numbers received");
+    
+    uint256 randomIndex = randomWords[0] % players.length;
+    recentWinner = players[randomIndex];
+    previousWinners.push(recentWinner);
+    
+    // Transfer prize to winner
+    uint256 prizeAmount = address(this).balance;
+    (bool success, ) = recentWinner.call{value: prizeAmount}("");
+    require(success, "Transfer failed");
+    
+    // Reset for next lottery
+    lotteryId++;
+    delete players;
+    state = LotteryState.OPEN;
+    
+    emit WinnerSelected(lotteryId - 1, recentWinner, prizeAmount);
+}
+```
+
+#### Administrative Functions
+```solidity
+function updateTicketPrice(uint256 newPrice) public onlyOwner {
+    require(state == LotteryState.OPEN && players.length == 0, "Cannot change during active lottery");
+    ticketPrice = newPrice;
+}
+
+function updateLotteryDuration(uint256 newDuration) public onlyOwner {
+    require(state == LotteryState.OPEN && players.length == 0, "Cannot change during active lottery");
+    lotteryDuration = newDuration;
+}
+
+function withdrawLink() public onlyOwner {
+    // Withdraw unused LINK tokens if any
+}
+```
+
+### Events
+```solidity
+event LotteryStarted(uint256 indexed lotteryId, uint256 ticketPrice, uint256 maxPlayers);
+event PlayerEntered(address indexed player, uint256 indexed lotteryId);
+event LotteryClosed(uint256 indexed lotteryId, uint256 playersCount);
+event RandomWinnerRequested(uint256 indexed lotteryId, uint256 requestId);
+event WinnerSelected(uint256 indexed lotteryId, address winner, uint256 amount);
+```
+
+## Deployment Configuration
+
+### Prerequisites
+- Node.js and npm
+- Hardhat or Truffle framework
+- MetaMask wallet with testnet ETH
+- Chainlink subscription with funded LINK tokens
+
+### Deployment Script
+```javascript
+// scripts/deploy.js
+async function main() {
+  const [deployer] = await ethers.getSigners();
+  
+  const ticketPrice = ethers.utils.parseEther("0.1");
+  const maxPlayers = 100;
+  const lotteryDuration = 7 * 24 * 60 * 60; // 1 week in seconds
+  
+  // Chainlink VRF details (example for Ethereum Goerli)
+  const vrfCoordinator = "0x2Ca8E0C643bDe4C2E08ab1fA0da3401AdAD7734D";
+  const keyHash = "0x79d3d8832d904592c0bf9818b621522c988bb8b0c05cdc3b15aea1b6e8db0c15";
+  const subscriptionId = 1234; // Your subscription ID
+  const callbackGasLimit = 100000;
+  const requestConfirmations = 3;
+  
+  const Lottery = await ethers.getContractFactory("DecentralizedLottery");
+  const lottery = await Lottery.deploy(
+    ticketPrice,
+    maxPlayers,
+    lotteryDuration,
+    vrfCoordinator,
+    keyHash,
+    subscriptionId,
+    callbackGasLimit,
+    requestConfirmations
+  );
+  
+  await lottery.deployed();
+  console.log("Lottery deployed to:", lottery.address);
+}
+```
